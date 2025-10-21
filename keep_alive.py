@@ -6,7 +6,7 @@ def ping_self():
     while True:
         try:
             # ⚠️ Replace this with your Render URL later after deployment
-            requests.get("https://YOUR-RENDER-URL.onrender.com/")
+            requests.get("https://automation-bot-5bho.onrender.com")
             print("Pinged site to keep it alive.")
         except Exception as e:
             print("Ping failed:", e)

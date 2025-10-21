@@ -129,17 +129,33 @@ def health_check():
     Health check endpoint for monitoring
     Checks database connectivity
     """
-    from services.db_service import get_db_connection
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1")
-        cursor.close()
-        conn.close()
-        return jsonify({"status": "healthy", "database": "connected"}), 200
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+    from services.db_service import db_pool, get_db_connection
+    
+    db_status = "not_configured"
+    db_error = None
+    
+    if db_pool is None:
+        db_status = "not_configured"
+    else:
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1")
+            cursor.close()
+            conn.close()
+            db_status = "connected"
+        except Exception as e:
+            logger.error(f"Database check failed: {e}")
+            db_status = "error"
+            db_error = str(e)
+    
+    # Return 200 even if DB is not configured (bot can work without it)
+    return jsonify({
+        "status": "healthy",
+        "bot": "running",
+        "database": db_status,
+        "database_error": db_error
+    }), 200
 
 # ================================================
 # ROOT ENDPOINT
