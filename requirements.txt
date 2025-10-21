@@ -1,5 +1,5 @@
 # QuickSell Chatbot Dependencies
-# Python 3.13+ (Windows)
+# Target: Python 3.11 (Render compatible)
 
 # Web Framework
 Flask==3.0.0
@@ -16,9 +16,9 @@ PyMySQL==1.1.0
 # Environment Variables
 python-dotenv==1.0.0
 
-# Production Server (Optional but recommended)
+# Production Server
 gunicorn==21.2.0
-gevent==23.9.1
+# gevent removed due to Python 3.11 build issues
 
 # Utilities
 python-dateutil==2.8.2
