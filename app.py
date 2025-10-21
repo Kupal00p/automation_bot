@@ -15,10 +15,14 @@ app = Flask(__name__)
 # Configure Flask session for admin dashboard
 app.secret_key = os.getenv('SECRET_KEY', 'quicksell-secret-key-change-in-production')
 
-# Register admin blueprint (temporarily disabled for testing)
-# TODO: Re-enable after database is configured
-# from admin_routes import admin_bp
-# app.register_blueprint(admin_bp)
+# Register admin blueprint
+# NOTE: Disable for production without database, enable for local testing
+try:
+    from admin_routes import admin_bp
+    app.register_blueprint(admin_bp)
+    logger.info("✅ Admin routes enabled")
+except Exception as e:
+    logger.warning(f"⚠️ Admin routes disabled: {e}")
 
 # ================================================
 # FAVICON ROUTE
