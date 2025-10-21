@@ -16,7 +16,7 @@ try:
     db_pool = pooling.MySQLConnectionPool(**DB_CONFIG)
     logger.info("✅ Database pool created successfully")
 except Exception as e:
-    logger.error(f"❌ Database pool error: {e}")
+    logger.warning(f"⚠️ Database not configured - running without database: {e}")
     db_pool = None
 
 def get_db_connection():
