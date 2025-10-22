@@ -1,6 +1,7 @@
 import os
 import logging
 import pickle
+import ssl
 
 # ================================================
 # LOGGING SETUP
@@ -20,6 +21,7 @@ PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN", "EAASk3ZAn0F6EBPo6jpVVtjdC9wW
 # ================================================
 # DATABASE CONFIGURATION (MySQL - Aiven Cloud)
 # ================================================
+# SSL configuration for Aiven MySQL
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("DB_PORT", "3306")),
@@ -28,9 +30,11 @@ DB_CONFIG = {
     "database": os.getenv("DB_NAME", "defaultdb"),
     "pool_name": "quicksell_pool",
     "pool_size": 5,
-    "ssl_disabled": False,  # SSL always enabled for Aiven
-    "ssl_verify_cert": True,
-    "ssl_verify_identity": True
+    # SSL configuration - use TLS without strict certificate verification
+    "ssl_disabled": False,
+    "ssl_verify_cert": False,  # Disable strict cert verification for Aiven
+    "ssl_verify_identity": False,
+    "tls_versions": ['TLSv1.2', 'TLSv1.3']
 }
 
 # ================================================
