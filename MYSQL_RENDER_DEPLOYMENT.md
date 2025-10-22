@@ -23,7 +23,7 @@ From your Aiven screenshot, set these variables in Render:
 ```bash
 # MySQL Database (Aiven)
 # Get these values from your Aiven Console
-DB_HOST=mysql-1c3f5577-automationbot-5abf.l.aivencloud.com
+DB_HOST=mysql-1c3f5577-automationbot-5abf.i.aivencloud.com
 DB_PORT=25620
 DB_USER=avnadmin
 DB_PASSWORD=YOUR_AIVEN_PASSWORD_HERE

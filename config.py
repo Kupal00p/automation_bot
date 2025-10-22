@@ -18,17 +18,19 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "my_secret_token")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN", "EAASk3ZAn0F6EBPo6jpVVtjdC9wW7qDqZBShDZCbbh5tWOGf8MXdssgu9dftyOVGOZBlGuM9A0kmRN8lt1ByilPWcE90MZBJ5S0LKbZARTLcJdafztIOGtAjGmFWyxAqyTPIhU4aLNrl3aEUm5YTlORMOZApMb3noz6ZBAH5NZA49jfwy2pZBmDGIYV4h4aCTNsMMde4kN1MgZDZD")
 
 # ================================================
-# DATABASE CONFIGURATION (MySQL)
+# DATABASE CONFIGURATION (MySQL - Aiven Cloud)
 # ================================================
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("DB_PORT", "3306")),
     "user": os.getenv("DB_USER", "root"),
     "password": os.getenv("DB_PASSWORD", "password"),
-    "database": os.getenv("DB_NAME", "quicksell_chatbot"),
+    "database": os.getenv("DB_NAME", "defaultdb"),
     "pool_name": "quicksell_pool",
     "pool_size": 5,
-    "ssl_disabled": False if os.getenv("DB_SSL", "true").lower() == "true" else True
+    "ssl_disabled": False,  # SSL always enabled for Aiven
+    "ssl_verify_cert": True,
+    "ssl_verify_identity": True
 }
 
 # ================================================
