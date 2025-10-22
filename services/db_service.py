@@ -16,7 +16,7 @@ try:
     db_pool = pooling.MySQLConnectionPool(**DB_CONFIG)
     logger.info("✅ Database pool created successfully")
 except Exception as e:
-    logger.warning(f"⚠️ Database not configured - running without database: {e}")
+    logger.error(f"❌ Database pool error: {e}")
     db_pool = None
 
 def get_db_connection():
@@ -44,10 +44,6 @@ def get_or_create_user(messenger_id, facebook_name=None):
     Returns:
         bool: True if successful, False otherwise
     """
-    if db_pool is None:
-        logger.warning(f"⚠️ Database not available - skipping user creation for {messenger_id}")
-        return True  # Return True to allow bot to continue working
-    
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -76,12 +72,10 @@ def get_or_create_user(messenger_id, facebook_name=None):
         return True
     except Exception as e:
         logger.error(f"Error in get_or_create_user: {e}")
-        return True  # Return True to allow bot to continue working
+        return False
     finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+        cursor.close()
+        conn.close()
 
 # ================================================
 # CHAT LOGGING
@@ -96,10 +90,6 @@ def log_chat(user_id, user_message, bot_response, intent=None):
         bot_response: Bot's response
         intent: Detected intent (optional)
     """
-    if db_pool is None:
-        logger.debug(f"⚠️ Database not available - skipping chat log")
-        return
-    
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -111,10 +101,8 @@ def log_chat(user_id, user_message, bot_response, intent=None):
     except Exception as e:
         logger.error(f"Error logging chat: {e}")
     finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+        cursor.close()
+        conn.close()
 
 # ================================================
 # CHATBOT REPLIES
@@ -129,10 +117,6 @@ def get_keyword_reply(keyword):
     Returns:
         str: Response text if found, None otherwise
     """
-    if db_pool is None:
-        logger.debug(f"⚠️ Database not available - skipping keyword lookup")
-        return None
-    
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -146,7 +130,5 @@ def get_keyword_reply(keyword):
         logger.error(f"Error getting keyword reply: {e}")
         return None
     finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+        cursor.close()
+        conn.close()
