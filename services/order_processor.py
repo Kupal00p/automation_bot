@@ -301,8 +301,8 @@ class OrderProcessor:
             self.cursor.execute("""
                 UPDATE orders
                 SET order_status = 'confirmed',
-                    confirmed_at = NOW(),
-                    processing_started_at = NOW()
+                    confirmed_at = CURRENT_TIMESTAMP,
+                    processing_started_at = CURRENT_TIMESTAMP
                 WHERE id = %s
             """, (order_id,))
             
@@ -358,7 +358,7 @@ class OrderProcessor:
             self.cursor.execute("""
                 UPDATE orders
                 SET order_status = 'cancelled',
-                    cancelled_at = NOW(),
+                    cancelled_at = CURRENT_TIMESTAMP,
                     cancellation_reason = %s
                 WHERE id = %s
             """, (reason, order_id))

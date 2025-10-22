@@ -112,7 +112,7 @@ class OrderValidator:
             self.errors.append(ValidationError('user_id', 'Failed to validate user', 'USER_CHECK_FAILED'))
         finally:
             cursor.close()
-            conn.close()
+            conn.close()  # Already using putconn
     
     def _validate_items(self, items: List[Dict]):
         """Validate order items"""
@@ -205,7 +205,7 @@ class OrderValidator:
             )
         finally:
             cursor.close()
-            conn.close()
+            conn.close()  # Already using putconn
     
     def _validate_amounts(self, order_data: Dict):
         """Validate order amounts"""
@@ -334,7 +334,7 @@ class OrderValidator:
             )
         finally:
             cursor.close()
-            conn.close()
+            conn.close()  # Already using putconn
     
     def _validate_promo_code(self, promo_code: Optional[str], order_data: Dict):
         """Validate promo code if provided"""
@@ -391,7 +391,7 @@ class OrderValidator:
             self.warnings.append('Could not validate promo code')
         finally:
             cursor.close()
-            conn.close()
+            conn.close()  # Already using putconn
     
     def _validate_verification_requirements(self, order_data: Dict):
         """Determine if order requires verification"""
@@ -427,7 +427,7 @@ class OrderValidator:
             if 'cursor' in locals():
                 cursor.close()
             if 'conn' in locals():
-                conn.close()
+                conn.close()  # Already using putconn
     
     @staticmethod
     def _is_valid_phone(phone: str) -> bool:

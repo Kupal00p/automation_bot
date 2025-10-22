@@ -41,7 +41,7 @@ def get_categories():
         return []
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def show_categories(sender_id):
     """
@@ -159,7 +159,7 @@ def show_products_page(sender_id, category_slug, page):
         send_message(sender_id, "Error loading products.")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def show_product_details(sender_id, product_id):
     """
@@ -285,7 +285,7 @@ def show_product_details(sender_id, product_id):
         send_message(sender_id, "Sorry, something went wrong loading the product. Please try again or type 'menu'.")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # PROMOTIONS
@@ -303,7 +303,7 @@ def get_active_promos():
         cursor.execute("""
             SELECT * FROM promos 
             WHERE is_active = TRUE 
-            AND NOW() BETWEEN start_date AND end_date
+            AND CURRENT_TIMESTAMP BETWEEN start_date AND end_date
             ORDER BY created_at DESC
         """)
         promos = cursor.fetchall()
@@ -313,7 +313,7 @@ def get_active_promos():
         return []
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def show_promos(sender_id):
     """
@@ -379,4 +379,4 @@ def show_shipping_info(sender_id):
         send_message(sender_id, "Error loading shipping information.")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn

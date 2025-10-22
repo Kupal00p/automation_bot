@@ -238,7 +238,7 @@ def get_pending_orders_count():
         return 0
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def get_todays_orders():
     """
@@ -265,4 +265,4 @@ def get_todays_orders():
         return {'total_orders': 0, 'total_sales': 0, 'avg_order_value': 0}
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn

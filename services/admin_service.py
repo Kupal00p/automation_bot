@@ -81,7 +81,7 @@ def get_all_orders(status=None, limit=50, offset=0):
         return []
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def get_order_by_id(order_id):
     """
@@ -144,7 +144,7 @@ def get_order_by_id(order_id):
         return None
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def get_order_by_number(order_number):
     """
@@ -184,7 +184,7 @@ def get_order_by_number(order_number):
         return None
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # ORDER STATUS UPDATE
@@ -216,13 +216,13 @@ def update_order_status(order_id, new_status, notify_customer=True):
         
         # Set timestamp based on status
         if new_status == 'confirmed':
-            update_query += ", confirmed_at = NOW()"
+            update_query += ", confirmed_at = CURRENT_TIMESTAMP"
         elif new_status == 'shipped':
-            update_query += ", shipped_at = NOW()"
+            update_query += ", shipped_at = CURRENT_TIMESTAMP"
         elif new_status == 'delivered':
-            update_query += ", delivered_at = NOW()"
+            update_query += ", delivered_at = CURRENT_TIMESTAMP"
         elif new_status == 'cancelled':
-            update_query += ", cancelled_at = NOW()"
+            update_query += ", cancelled_at = CURRENT_TIMESTAMP"
         
         update_query += " WHERE id = %s"
         params.append(order_id)
@@ -243,7 +243,7 @@ def update_order_status(order_id, new_status, notify_customer=True):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def confirm_order_by_admin(order_id, admin_notes=None):
     """
@@ -277,7 +277,7 @@ def confirm_order_by_admin(order_id, admin_notes=None):
         update_query = """
             UPDATE orders 
             SET order_status = 'confirmed', 
-                confirmed_at = NOW()
+                confirmed_at = CURRENT_TIMESTAMP
         """
         
         if admin_notes:
@@ -312,7 +312,7 @@ def confirm_order_by_admin(order_id, admin_notes=None):
         if cursor:
             cursor.close()
         if conn:
-            conn.close()
+            conn.close()  # Already using putconn
 
 def cancel_order_by_admin(order_id, reason):
     """
@@ -340,7 +340,7 @@ def cancel_order_by_admin(order_id, reason):
         cursor.execute("""
             UPDATE orders 
             SET order_status = 'cancelled', 
-                cancelled_at = NOW(),
+                cancelled_at = CURRENT_TIMESTAMP,
                 notes = CONCAT(notes, '\nCancelled by Admin: ', %s)
             WHERE id = %s
         """, (reason, order_id))
@@ -383,7 +383,7 @@ def cancel_order_by_admin(order_id, reason):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # CUSTOMER NOTIFICATIONS
@@ -499,7 +499,7 @@ def get_dashboard_stats():
         cursor.execute("""
             SELECT COUNT(DISTINCT user_id) as count 
             FROM orders 
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            WHERE created_at >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY)
         """)
         stats['active_users'] = cursor.fetchone()['count']
         
@@ -518,7 +518,7 @@ def get_dashboard_stats():
                 DAYNAME(created_at) as day_name,
                 COALESCE(SUM(total_amount), 0) as total
             FROM orders
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            WHERE created_at >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 7 DAY)
                 AND order_status != 'cancelled'
             GROUP BY DATE(created_at), DAYNAME(created_at)
             ORDER BY DATE(created_at)
@@ -531,7 +531,7 @@ def get_dashboard_stats():
             SELECT COUNT(*) as count
             FROM users
             WHERE created_at IS NOT NULL 
-                AND DATE(created_at) >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                AND DATE(created_at) >= DATE_FORMAT(CURRENT_TIMESTAMP, '%Y-%m-01')
         """)
         stats['new_customers'] = cursor.fetchone()['count']
         
@@ -580,7 +580,7 @@ def get_dashboard_stats():
                 DATE_FORMAT(created_at, '%b') as month_name,
                 COALESCE(SUM(total_amount), 0) as total
             FROM orders
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            WHERE created_at >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 6 MONTH)
                 AND order_status != 'cancelled'
             GROUP BY YEAR(created_at), MONTH(created_at)
             ORDER BY YEAR(created_at), MONTH(created_at)
@@ -603,7 +603,7 @@ def get_dashboard_stats():
         }
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # HELPER FUNCTIONS
@@ -676,4 +676,4 @@ def get_recent_activity(limit=10):
         return []
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn

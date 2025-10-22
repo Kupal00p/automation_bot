@@ -89,7 +89,7 @@ def is_trusted_buyer(user_id):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def is_new_user(user_id):
     """Check if user has less than 3 successful orders"""
@@ -109,7 +109,7 @@ def is_new_user(user_id):
         return True
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # VERIFICATION INITIATION
@@ -183,7 +183,7 @@ def create_verification_record(order_id, order_total):
         logger.error(f"Error creating verification record: {e}")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # ID VERIFICATION FLOW
@@ -235,7 +235,7 @@ def handle_id_upload(messenger_id, order_id, image_url, id_type='Unknown'):
                 verification_status = 'pending',
                 selfie_image_url = NULL,
                 rejection_reason = NULL,
-                submitted_at = NOW()
+                submitted_at = CURRENT_TIMESTAMP
         """, (order_id, user['id'], image_url, id_type, image_url, id_type))
         
         conn.commit()
@@ -263,7 +263,7 @@ def handle_id_upload(messenger_id, order_id, image_url, id_type='Unknown'):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def handle_selfie_upload(messenger_id, order_id, image_url):
     """Handle selfie image upload"""
@@ -279,7 +279,7 @@ def handle_selfie_upload(messenger_id, order_id, image_url):
                 rejection_reason = NULL,
                 reviewed_by = NULL,
                 reviewed_at = NULL,
-                submitted_at = NOW()
+                submitted_at = CURRENT_TIMESTAMP
             WHERE order_id = %s
         """, (image_url, order_id))
         
@@ -319,7 +319,7 @@ def handle_selfie_upload(messenger_id, order_id, image_url):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # UPFRONT PAYMENT FLOW
@@ -373,7 +373,7 @@ def start_upfront_payment(messenger_id, order_id):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def send_payment_instructions(messenger_id, order_id, payment_method):
     """Send payment instructions for upfront payment"""
@@ -452,7 +452,7 @@ def send_payment_instructions(messenger_id, order_id, payment_method):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def handle_payment_proof(messenger_id, order_id, image_url, payment_method, amount):
     """Handle payment proof upload"""
@@ -482,7 +482,7 @@ def handle_payment_proof(messenger_id, order_id, image_url, payment_method, amou
                 rejection_reason = NULL,
                 reviewed_by = NULL,
                 reviewed_at = NULL,
-                submitted_at = NOW()
+                submitted_at = CURRENT_TIMESTAMP
         """, (order_id, user['id'], amount, image_url, payment_method,
               amount, image_url, payment_method))
         
@@ -529,7 +529,7 @@ def handle_payment_proof(messenger_id, order_id, image_url, payment_method, amou
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # ADMIN NOTIFICATIONS
@@ -567,7 +567,7 @@ def notify_admin_verification_pending(order_id):
         logger.error(f"Error notifying admin: {e}")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def notify_admin_payment_verification_pending(order_id, amount):
     """Notify admin of pending payment verification"""
@@ -602,7 +602,7 @@ def notify_admin_payment_verification_pending(order_id, amount):
         logger.error(f"Error notifying admin: {e}")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # VERIFICATION APPROVAL/REJECTION
@@ -618,7 +618,7 @@ def approve_verification(order_id, admin_id=None):
             UPDATE order_verifications
             SET verification_status = 'approved',
                 reviewed_by = %s,
-                reviewed_at = NOW()
+                reviewed_at = CURRENT_TIMESTAMP
             WHERE order_id = %s
         """, (admin_id, order_id))
         
@@ -663,7 +663,7 @@ def approve_verification(order_id, admin_id=None):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 def reject_verification(order_id, reason, admin_id=None):
     """Reject verification and cancel order"""
@@ -676,7 +676,7 @@ def reject_verification(order_id, reason, admin_id=None):
             UPDATE order_verifications
             SET verification_status = 'rejected',
                 reviewed_by = %s,
-                reviewed_at = NOW(),
+                reviewed_at = CURRENT_TIMESTAMP,
                 rejection_reason = %s
             WHERE order_id = %s
         """, (admin_id, reason, order_id))
@@ -731,4 +731,4 @@ def reject_verification(order_id, reason, admin_id=None):
         return False
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn

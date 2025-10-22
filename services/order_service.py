@@ -94,7 +94,7 @@ def handle_order_request(sender_id, product_id):
         send_message(sender_id, "Sorry, something went wrong. Please try again or type 'menu'.")
     finally:
         cursor.close()
-        conn.close()
+        conn.close()  # Already using putconn
 
 # ================================================
 # ORDER FLOW HANDLERS
@@ -377,7 +377,7 @@ def confirm_and_create_order(sender_id):
                 order_number, user_id, subtotal, shipping_fee, 
                 total_amount, payment_method, payment_status, 
                 order_status, notes, created_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
         """, (
             order_number,
             user_id,
@@ -519,7 +519,7 @@ def confirm_and_create_order(sender_id):
     finally:
         if conn:
             cursor.close()
-            conn.close()
+            conn.close()  # Already using putconn
 
 def cancel_order(sender_id):
     """

@@ -1,5 +1,4 @@
-"""
-Database service module
+"""Database service module
 Handles all database operations including connection pooling, user management, and chat logging
 """
 import mysql.connector

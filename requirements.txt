@@ -9,9 +9,9 @@ Werkzeug==3.0.1
 requests==2.31.0
 urllib3==2.1.0
 
-# Database
-mysql-connector-python==8.2.0
-PyMySQL==1.1.0
+# Database (MySQL)
+mysql-connector-python==9.1.0
+PyMySQL==1.1.1
 
 # Environment Variables
 python-dotenv==1.0.0
